@@ -22,7 +22,7 @@ Config.ServerStartupWeather = 'fog' --sunny, fog, overcast, rain
 ----- GiftBox Configs
 Config.GiftboxesAvailable = true
 Config.ViewDistance = 3.0
-Config.ResetGiftsOnRestart = true
+Config.ResetGiftsOnRestart = false --Toggling this to true will respawn all gifts on server/script restart.
 Config.GiftboxModel = 'p_cs_giftbox01x' -- p_cs_giftbox01x, p_package09, p_pumpkin_01x
 
 -- What items should be available within a giftbox (Player gets a random change to get any one of the items, quantity between the min/max)
