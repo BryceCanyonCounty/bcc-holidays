@@ -1,5 +1,5 @@
 Config = {}
-Config.Devmode = true -- Set to true only on dev servers (this provides a command/tool to place gifts)
+Config.Devmode = false -- Set to true only on dev servers (this provides a command/tool to place gifts)
 
 --- Holiday Tree Configs.
 Config.DisplayItemActive = true

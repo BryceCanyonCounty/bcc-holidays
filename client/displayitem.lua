@@ -5,6 +5,7 @@ if Config.DisplayItemActive == true then
     AddEventHandler("vorp:SelectedCharacter", function(charid)
         Wait(1000)
         for k, displayitem in pairs(Config.DisplayItemLocations) do
+            print('spawning tree')
             local ditem = BccUtils.Object:Create(Config.DisplayItemModel, displayitem.x, displayitem.y, displayitem.z, 0, true)
             ditem:SetAsMission()
             ditem:Freeze()

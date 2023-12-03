@@ -68,12 +68,4 @@ if Config.GiftboxesAvailable == true then
         local datas = json.decode(edata)
         TriggerClientEvent("bccwintergifts:send", _source, datas)
     end)
-
-    -- TEST COMMANDS
-    RegisterCommand('spawngifts', function(source, args)
-        local _source = source
-        local edata = LoadResourceFile(GetCurrentResourceName(), "./gifts.json")
-        local datas = json.decode(edata)
-        TriggerClientEvent("bccwintergifts:send", _source, datas)
-    end, true)
 end
