@@ -24,6 +24,8 @@ Config.GiftboxesAvailable = true
 Config.ViewDistance = 3.0
 Config.ResetGiftsOnRestart = true
 Config.GiftboxModel = 'p_cs_giftbox01x' -- p_cs_giftbox01x, p_package09, p_pumpkin_01x
+
+-- What items should be available within a giftbox (Player gets a random change to get any one of the items, quantity between the min/max)
 Config.GiftableItems = {
     {
         item = 'apple',
