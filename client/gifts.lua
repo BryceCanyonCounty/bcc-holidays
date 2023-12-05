@@ -69,27 +69,28 @@ if Config.GiftboxesAvailable == true then
 
         while true do
             Citizen.Wait(0)
-            if spawnedgifts[1] ~= nil then
-                local closest = {
-                    dist = 99999999
-                }
+            local isDead = IsEntityDead(playerped)
+            if isDead ~= 0 then
+                if spawnedgifts[1] ~= nil then
+                    local closest = {
+                        dist = 99999999
+                    }
 
-                for i, gift in pairs(spawnedgifts) do
-                    local playerped = PlayerPedId()
-                    local playerCoords = GetEntityCoords(playerped)
-                    local giftCoords = gift.data.coords
-                    local dist = BccUtils.Math.GetDistanceBetween(
-                        vector3(playerCoords.x, playerCoords.y, playerCoords.z),
-                        vector3(giftCoords.x, giftCoords.y, giftCoords.z))
-                    if dist < Config.ViewDistance then
-                        if dist <= closest.dist then
-                            closest = {
-                                dist = dist
-                            }
+                    for i, gift in pairs(spawnedgifts) do
+                        local playerped = PlayerPedId()
+                        local playerCoords = GetEntityCoords(playerped)
+                        local giftCoords = gift.data.coords
+                        local dist = BccUtils.Math.GetDistanceBetween(
+                            vector3(playerCoords.x, playerCoords.y, playerCoords.z),
+                            vector3(giftCoords.x, giftCoords.y, giftCoords.z))
+                        if dist < Config.ViewDistance then
+                            if dist <= closest.dist then
+                                closest = {
+                                    dist = dist
+                                }
 
-                            Citizen.InvokeNative(0x69F4BE8C8CC4796C, playerped, gift.giftbox:GetObj(), 3000, 2048, 3) -- TaskLookAtEntity
-                            local isDead = IsEntityDead(playerped)
-                            if isDead ~= 0 then
+                                Citizen.InvokeNative(0x69F4BE8C8CC4796C, playerped, gift.giftbox:GetObj(), 3000, 2048, 3) -- TaskLookAtEntity
+
                                 PromptGroup:ShowGroup("Holiday Gift")
                                 if giftprompt:HasCompleted() then
                                     gift.src = 'player'

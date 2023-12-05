@@ -24,7 +24,8 @@ shared_script {
 }
 
 dependencies {
+    'bcc-utils',
     'weathersync'
 }
 
-version '1.0.0'
+version '1.0.1'
