@@ -1,3 +1,7 @@
+
+local Core = exports.vorp_core:GetCore()
+local BccUtils = exports['bcc-utils'].initiate()
+
 if Config.GiftboxesAvailable == true then
     if Config.Devmode == true then
         RegisterServerEvent("bccwintergifts:add")
@@ -21,7 +25,7 @@ if Config.GiftboxesAvailable == true then
     end
 
 
-    if Config.ResetGiftsOnRestart == true then
+    if Config.ResetGiftsOnRestart then
         local edata = LoadResourceFile(GetCurrentResourceName(), "./gifts.json")
         local gifts = json.decode(edata)
 
@@ -57,7 +61,7 @@ if Config.GiftboxesAvailable == true then
             local giftedItem = Config.GiftableItems[randomIndex]
             local giftedQuantity = math.random(giftedItem.quantity.min, giftedItem.quantity.max)
             exports.vorp_inventory:addItem(_source, giftedItem.item, giftedQuantity)
-            TriggerClientEvent('vorp:TipRight', _source, 'Gift Received: ' .. giftedItem.item .. 'x' .. giftedQuantity, 4000)
+            Core.NotifyAvanced(source, _U('holidayGiftReceived') .. giftedItem.itemLabel .. ' x' .. giftedQuantity, giftedItem.itemTextureDict, giftedItem.itemTexturehashname, giftedItem.itemTextureColor, 4000)
         end
     end)
 
@@ -69,3 +73,5 @@ if Config.GiftboxesAvailable == true then
         TriggerClientEvent("bccwintergifts:send", _source, datas)
     end)
 end
+
+BccUtils.Versioner.checkFile(GetCurrentResourceName(), 'https://github.com/BryceCanyonCounty/bcc-holidays')
