@@ -15,7 +15,7 @@ if Config.GiftboxesAvailable == true then
 
                 local giftboxObj = giftbox:GetObj()
 
-                Citizen.InvokeNative(0x7DFB49BCDB73089A, giftboxObj, true) --SetPickupLight
+                Citizen.InvokeNative(0x7DFB49BCDB73089A, giftboxObj, true) -- SetPickupLight
 
                 spawnedgifts[k] = {
                     giftbox = giftbox,
@@ -35,6 +35,7 @@ if Config.GiftboxesAvailable == true then
         end
         spawnedgifts = {}
     end
+
     RegisterNetEvent("vorp:SelectedCharacter")
     AddEventHandler("vorp:SelectedCharacter", function(charid)
         Wait(1000)
@@ -78,67 +79,72 @@ if Config.GiftboxesAvailable == true then
         while true do
             Citizen.Wait(0)
             local playerped = PlayerPedId()
-            local isDead = IsEntityDead(playerped)
+            
+            -- Skip processing if the player is dead
+            if IsEntityDead(playerped) then
+                Citizen.Wait(1000) -- Add delay to avoid constant checks
+                goto continue
+            end
 
-            if isDead ~= 0 then
-                if spawnedgifts[1] ~= nil then
-                    local closest = {
-                        dist = 99999999
-                    }
-                    local playerCoords = GetEntityCoords(playerped)
+            if spawnedgifts[1] ~= nil then
+                local closest = {
+                    dist = 99999999
+                }
+                local playerCoords = GetEntityCoords(playerped)
 
-                    for i, gift in pairs(spawnedgifts) do
-                        local giftCoords = gift.data.coords
-                        local dist = BccUtils.Math.GetDistanceBetween(
-                            vector3(playerCoords.x, playerCoords.y, playerCoords.z),
-                            vector3(giftCoords.x, giftCoords.y, giftCoords.z))
-                        if dist < Config.ViewDistance and gift.canPickup then
-                            if dist <= closest.dist then
-                                closest = {
-                                    dist = dist,
-                                    gift = gift
-                                }
-                                Citizen.InvokeNative(0x69F4BE8C8CC4796C, playerped, gift.giftbox:GetObj(), 3000, 2048, 3) -- TaskLookAtEntity
+                for i, gift in pairs(spawnedgifts) do
+                    local giftCoords = gift.data.coords
+                    local dist = BccUtils.Math.GetDistanceBetween(
+                        vector3(playerCoords.x, playerCoords.y, playerCoords.z),
+                        vector3(giftCoords.x, giftCoords.y, giftCoords.z))
+                    
+                    if dist < Config.ViewDistance and gift.canPickup then
+                        if dist <= closest.dist then
+                            closest = {
+                                dist = dist,
+                                gift = gift
+                            }
 
-                                local currentTime = GetGameTimer()
-                                if currentTime - gift.lastPickupTime >= Config.PickupCooldown then
-                                    PromptGroup:ShowGroup(_U('holidayPrompt'))
-                                    if giftprompt:HasCompleted() then
-                                        gift.src = 'player'
-                                        TriggerServerEvent("bccwintergifts:collect", gift.data)
+                            Citizen.InvokeNative(0x69F4BE8C8CC4796C, playerped, gift.giftbox:GetObj(), 3000, 2048, 3) -- TaskLookAtEntity
 
-                                        local animDict =
-                                        "amb_rest@world_human_sketchbook_ground_pickup@male_a@react_look@exit@generic"
-                                        RequestAnimDict(animDict)
+                            local currentTime = GetGameTimer()
+                            if currentTime - gift.lastPickupTime >= Config.PickupCooldown then
+                                PromptGroup:ShowGroup(_U('holidayPrompt'))
+                                if giftprompt:HasCompleted() then
+                                    gift.src = 'player'
+                                    TriggerServerEvent("bccwintergifts:collect", gift.data)
 
-                                        while not HasAnimDictLoaded(animDict) do
-                                            Wait(10)
-                                        end
+                                    local animDict = "amb_rest@world_human_sketchbook_ground_pickup@male_a@react_look@exit@generic"
+                                    RequestAnimDict(animDict)
 
-                                        TaskPlayAnim(playerped, animDict, "react_look_front_exit", 1.0, 8.0, -1, 1, 0,
-                                            false, false, false)
-                                        Wait(2200)
-                                        ClearPedTasks(playerped)
-                                        gift.giftbox:Remove()
-                                        gift.lastPickupTime = currentTime
-                                        gift.canPickup = false
-                                        CreateThread(function()
-                                            Wait(Config.PickupCooldown)
-                                            gift.canPickup = true
-                                        end)
-
-                                        closest = { dist = 99999999 }
+                                    while not HasAnimDictLoaded(animDict) do
+                                        Wait(10)
                                     end
 
-                                    if giftprompt:HasFailed() then
-                                        print("[DEBUG] Gift prompt failed.")
-                                    end
+                                    TaskPlayAnim(playerped, animDict, "react_look_front_exit", 1.0, 8.0, -1, 1, 0, false, false, false)
+                                    Wait(2200)
+                                    ClearPedTasks(playerped)
+                                    gift.giftbox:Remove()
+                                    gift.lastPickupTime = currentTime
+                                    gift.canPickup = false
+
+                                    CreateThread(function()
+                                        Wait(Config.PickupCooldown)
+                                        gift.canPickup = true
+                                    end)
+
+                                    closest = { dist = 99999999 }
+                                end
+
+                                if giftprompt:HasFailed() then
+                                    print("[DEBUG] Gift prompt failed.")
                                 end
                             end
                         end
                     end
                 end
             end
+            ::continue::
         end
     end)
 end
